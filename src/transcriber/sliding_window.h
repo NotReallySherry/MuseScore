@@ -20,11 +20,15 @@ class SlidingWindow {
     public:
         int size;
         int notes_count;
+        int capacity;
         
         std::vector<std::vector <int> > window;
-        SlidingWindow(int window_size, int notes_per_window);
+        SlidingWindow(int window_capacity, int notes_per_window);
 
         void update(std::vector<int> new_notes);
 
         std::vector<int> get_notes();
+
+        // helper function
+        void print_window();
 };
