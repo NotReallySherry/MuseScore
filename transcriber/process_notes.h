@@ -1,3 +1,4 @@
+#include <string>
 #include "sliding_window.h"
 // wrapper around the sliding window class
 // takes in raw data from the rasperry pi and returns processed notes
