@@ -16,7 +16,7 @@ void SlidingWindow::update(std::vector<int> new_notes) {
 }
 
 std::vector<std::pair<int, int> > SlidingWindow::get_notes() {
-    // result is the array of duration of notes being pressed
+    // result is the array of length:average_dynamics pairs
     std::vector<std::pair<int, int> > result;
     if (window.size() < 2) {
         for (int i = 0; i < notes_count; i++) {
