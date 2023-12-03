@@ -7,9 +7,10 @@ class ProcessNotes {
         SlidingWindow window;
         int polling_speed;
         int whole_note_length;
+        std::ofstream& outfile;
 
     public:
-        ProcessNotes(int window_size, int notes_per_window, int p_speed, int whole_note_length);
+        ProcessNotes(int window_size, int notes_per_window, int p_speed, int whole_note_length, std::ofstream& output_file);
 
         void update(std::string new_notes);
         std::vector<std::pair<int, int> > get_notes(); // output: vector of pairs of (duration, average_dynamics)

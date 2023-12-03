@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include <fstream>
 
 #include "process_notes.h"
 
@@ -34,7 +35,7 @@ int main() {
     int window_size; // how "long" of notes to keep around as data to be used
     int notes_per_window; // now many notes are sticked with sensors
     int pulling_speed; // how many ms until update the notes onto the screen
-    int whole_note_length; // how many ms is a whole note
+    int whole_note_length; // how many polling cycles means a complete whole note
     
     std::cin >> window_size >> notes_per_window >> pulling_speed >> whole_note_length;
 
@@ -42,12 +43,16 @@ int main() {
         std::cout << "invalid configuration input" << std::endl;
         return 1;
     }
-
     std::cout << "notes_per_window: " << notes_per_window << ", pulling_speed: " << pulling_speed << ", window_size: " << window_size << ", whole_note_length: " << whole_note_length << std::endl;
 
-    ProcessNotes process_notes(window_size, notes_per_window, pulling_speed, whole_note_length);
+    // create an output file
+    std::ofstream outfile;
+    outfile.open("output.txt");
+
+    ProcessNotes process_notes(window_size, notes_per_window, pulling_speed, whole_note_length, outfile);
 
     run_code(process_notes);
 
+    outfile.close();
     return 0;
 }

@@ -1,12 +1,15 @@
 #include "process_notes.h"
 #include <iostream>
 #include <assert.h>     /* assert */
+#include <string>
+#include <fstream>
 
 // constructor 
-ProcessNotes::ProcessNotes(int window_size, int notes_per_window, int p_speed, int whole_note_length) : window(window_size, notes_per_window) {
-    polling_speed = p_speed;
-    whole_note_length = whole_note_length;
-}
+ProcessNotes::ProcessNotes(int window_size, int notes_per_window, int p_speed, int whole_note_length, std::ofstream& output_file) : 
+    window(window_size, notes_per_window), 
+    outfile(output_file),
+    polling_speed(p_speed),
+    whole_note_length(whole_note_length) {}
 
 // update the sliding window with new notes
 void ProcessNotes::update(std::string new_notes) {
@@ -70,12 +73,14 @@ void ProcessNotes::print_get_notes_result(std::vector<std::pair<int, int> > resu
 }
 
 void ProcessNotes::print_result_terminal_helper(int note, int length, int dynamics) {
+    std::cout << "note: " << note << ", length: " << length << ", dynamics: " << dynamics << std::endl;
     int note_length_musically_raw = whole_note_length / length;
     int note_length_musically = round_to_power_of_two(note_length_musically_raw);
     std::string note_str = print_result_terminal_helper_note(note);
     std::string length_str = print_result_terminal_helper_length(note_length_musically);
     std::string dynamics_str = print_result_terminal_helper_dynamics(dynamics);
     std::cout << note_str << ", " << length_str << " is being pressed " << dynamics_str << std::endl;
+    outfile << note_str << ", " << length_str << " is being pressed " << dynamics_str << std::endl;
 }
 
 int ProcessNotes::round_to_power_of_two(int num) {

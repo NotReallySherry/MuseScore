@@ -44,7 +44,7 @@ void test_process_notes1() {
 }
 
 void test_process_notes2() {
-    ProcessNotes process_notes(2643, 3, 2, 128);
+    ProcessNotes process_notes(300, 3, 2, 128);
     int noteC[] = {1, 3, 0, 2, 1, 1, 2, 1, 2, 0, 0, 0, 1, 0};
     int noteD[] = {2, 2, 3, 2, 0, 2, 1, 2, 0, 0, 2, 2, 2, 0};
     int noteE[] = {2, 0, 0, 1, 2, 2, 0, 0, 2, 2, 3, 2, 0, 0};
