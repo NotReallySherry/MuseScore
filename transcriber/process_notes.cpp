@@ -4,16 +4,16 @@
 #include <string>
 #include <fstream>
 
-// constructor 
-ProcessNotes::ProcessNotes(int window_size, int notes_per_window, int p_speed, int whole_note_length, std::ofstream& output_file) : 
-    window(window_size, notes_per_window), 
+// constructor
+ProcessNotes::ProcessNotes(int window_size, int notes_per_window, int p_speed, int whole_note_length, std::ofstream& output_file) :
+    window(window_size, notes_per_window),
     outfile(output_file),
     polling_speed(p_speed),
     whole_note_length(whole_note_length) {}
 
 // update the sliding window with new notes
 void ProcessNotes::update(std::string new_notes) {
-    // string format: 
+    // string format:
     // pulling cycle, bpm, note1:dynamic1, note2:dynamic2, note3:dynamic3, note4:dynamic4, note5:dynamic5, note6:dynamic6, note7:dynamic7
     // dynamics comes in 0-3, 0 is not pressed, 1 is pressed lightly, 2 is pressed medium, 3 is pressed hard
     // split the string by comma
@@ -26,8 +26,7 @@ void ProcessNotes::update(std::string new_notes) {
         notes.push_back(token);
         new_notes.erase(0, pos + delimiter.length());
     }
-
-    int cycle = std::stoi(notes[0]);
+    long cycle = std::stol(notes[0]);
     if (cycle % polling_speed != 0) {
         return;
     }
@@ -62,14 +61,17 @@ int ProcessNotes::get_polling_speed() {
 }
 
 void ProcessNotes::print_get_notes_result(std::vector<std::pair<int, int> > result) {
+    int seen = 0;
     for (int i = 0; i < result.size(); i++) {
         // length dynamics
         if (result[i].first > 0 && result[i].second > 0) {
             // if the note is pressed for more than 1 whole note
             print_result_terminal_helper(i, result[i].first, result[i].second);
-        } 
+            seen = 1;
+        }
     }
-    std::cout << std::endl;
+    if (seen == 1)
+      std::cout << std::endl;
 }
 
 void ProcessNotes::print_result_terminal_helper(int note, int length, int dynamics) {
@@ -151,7 +153,7 @@ std::string ProcessNotes::print_result_terminal_helper_length(int length) {
             break;
     }
     return result;
-}  
+}
 
 std::string ProcessNotes::print_result_terminal_helper_dynamics(int dynamics) {
     std::string result;
@@ -180,6 +182,6 @@ std::string ProcessNotes::print_result_terminal_helper_dynamics(int dynamics) {
 //     for (int i = 0; i < result.size(); i++) {
 //         if (result[i].first > 0) {
 //             QKeyEvent pressEvent(QEvent::KeyPress, Qt::Key_A, Qt::NoModifier, "A");
-//         } 
+//         }
 //     }
 // }
