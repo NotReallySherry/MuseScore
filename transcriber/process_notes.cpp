@@ -74,6 +74,71 @@ void ProcessNotes::print_get_notes_result(std::vector<std::pair<int, int> > resu
       std::cout << std::endl;
 }
 
+void ProcessNotes::print_result_guido(int note, int length, int dynamics) {
+    int note_length_musically_raw = whole_note_length / length;
+    int note_length_musically = round_to_power_of_two(note_length_musically_raw);
+    std::string note_str = print_result_guido_note(note);
+    std::string length_str = std::to_string(note_length_musically);
+    std::string dynamics_str = print_result_terminal_helper_dynamics(dynamics);
+    std::cout << note_str << ", " << length_str << " is being pressed " << dynamics_str << std::endl;
+    outfile << note_str << "/" << length_str << " " << std::endl;
+}
+
+std::string ProcessNotes::print_result_guido_note(int note) {
+    std::string result;
+    switch (note) {
+        case 0:
+            result += "c";
+            break;
+        case 1: 
+            result += "c#";
+            break;
+        case 2:
+            result += "d";
+            break;
+        case 3:
+            result += "d#";
+            break;
+        case 4:
+            result += "e";
+            break;
+        case 5:
+            result += "f";
+            break;
+        case 6:
+            result += "f#";
+            break;
+        case 7:
+            result += "g";
+            break;
+        case 8:
+            result += "g#";
+            break;
+        case 9:
+            result += "a";
+            break;
+        case 10:
+            result += "a#";
+            break;
+        case 11:
+            result += "b";
+            break;
+        case 12:
+            result += "c";
+            break;  
+        case 13:
+            result += "c#";
+            break;
+        case 14:
+            result += "d";
+            break;
+        case 15:
+            result += "d#";
+            break;    
+    }
+    return result;
+}
+
 void ProcessNotes::print_result_terminal_helper(int note, int length, int dynamics) {
     std::cout << "note: " << note << ", length: " << length << ", dynamics: " << dynamics << std::endl;
     int note_length_musically_raw = whole_note_length / length;
@@ -82,7 +147,7 @@ void ProcessNotes::print_result_terminal_helper(int note, int length, int dynami
     std::string length_str = print_result_terminal_helper_length(note_length_musically);
     std::string dynamics_str = print_result_terminal_helper_dynamics(dynamics);
     std::cout << note_str << ", " << length_str << " is being pressed " << dynamics_str << std::endl;
-    outfile << note_str << ", " << length_str << " is being pressed " << dynamics_str << std::endl;
+    // outfile << note_str << ", " << length_str << " is being pressed " << dynamics_str << std::endl;
 }
 
 int ProcessNotes::round_to_power_of_two(int num) {
@@ -99,27 +164,49 @@ std::string ProcessNotes::print_result_terminal_helper_note(int note) {
         case 0:
             result += "C";
             break;
-        case 1:
-            result += "D";
+        case 1: 
+            result += "C# / Db";
             break;
         case 2:
-            result += "E";
+            result += "D";
             break;
         case 3:
-            result += "F";
+            result += "D# / Eb";
             break;
         case 4:
-            result += "G";
+            result += "E";
             break;
         case 5:
-            result += "A";
+            result += "F";
             break;
         case 6:
+            result += "F# / Gb";
+            break;
+        case 7:
+            result += "G";
+            break;
+        case 8:
+            result += "G# / Ab";
+            break;
+        case 9:
+            result += "A";
+            break;
+        case 10:
+            result += "A# / Bb";
+            break;
+        case 11:
             result += "B";
             break;
-        default:
-            result += "invalid";
+        case 12:
+            result += "C";
+            break;  
+        case 13:
+            result += "C# / Db";
             break;
+        case 14:
+            result += "D";
+            break;
+        default:
     }
     return result;
 }
@@ -176,12 +263,3 @@ std::string ProcessNotes::print_result_terminal_helper_dynamics(int dynamics) {
     }
     return result;
 }
-
-
-// void ProcessNotes::call_api(std::vector<std::pair<int, int> > result) {
-//     for (int i = 0; i < result.size(); i++) {
-//         if (result[i].first > 0) {
-//             QKeyEvent pressEvent(QEvent::KeyPress, Qt::Key_A, Qt::NoModifier, "A");
-//         }
-//     }
-// }

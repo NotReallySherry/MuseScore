@@ -17,7 +17,10 @@ class ProcessNotes {
         std::vector<std::pair<int, int> > get_notes(); // output: vector of pairs of (duration, average_dynamics)
 
         void print_get_notes_result(std::vector<std::pair<int, int> > result);
-        // void call_api(std::vector<std::pair<int, int> > result);
+        
+        
+        void print_result_guido(int note, int length, int dynamics);
+        std::string print_result_guido_note(int note);
 
         void print_result_terminal_helper(int note, int length, int dynamics);
         int round_to_power_of_two(int num);
