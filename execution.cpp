@@ -104,7 +104,7 @@ int main(int argc, char* argv[]) {
 
     // create an output file
     std::ofstream outfile;
-    outfile.open("output.txt");
+    outfile.open("cppoutput.txt");
 
     ProcessNotes process_notes(window_size, notes_per_window, pulling_speed, whole_note_length, outfile);
 

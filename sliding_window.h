@@ -22,7 +22,7 @@ class SlidingWindow {
 
         void update(std::vector<int> new_notes);
 
-        std::vector<std::pair<int, int> > get_notes();
+    std::vector<std::pair<int, int> > get_notes();
 
         // helper function
         void print_window();

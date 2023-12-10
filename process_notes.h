@@ -25,7 +25,7 @@ class ProcessNotes {
         void print_result_helper(int note, int length, int dynamics);
         int round_to_power_of_two(int num);
         std::string print_result_terminal_helper_note(int note);
-        std::string print_result_lilypond_note(int note);
+        std::string print_result_abjad_note(int note);
         std::string print_result_terminal_helper_length(int note_length_musically);
         std::string print_result_terminal_helper_dynamics(int dynamics);
 

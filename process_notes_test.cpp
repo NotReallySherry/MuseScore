@@ -6,7 +6,7 @@
 void test_process_notes1() {
     // create an output file
     std::ofstream outfile;
-    outfile.open("output.txt");
+    outfile.open("cppoutput.txt");
     // instantiate new process_notes
     ProcessNotes process_notes(100, 7, 1, 64, outfile);
 
@@ -49,7 +49,7 @@ void test_process_notes1() {
 void test_process_notes2() {
     // create an output file
     std::ofstream outfile;
-    outfile.open("output.txt");
+    outfile.open("cppoutput.txt");
 
     ProcessNotes process_notes(300, 3, 2, 128, outfile);
     int noteC[] = {1, 3, 0, 2, 1, 1, 2, 1, 2, 0, 0, 0, 1, 0};

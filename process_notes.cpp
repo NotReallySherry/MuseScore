@@ -83,11 +83,11 @@ void ProcessNotes::print_result_helper(int note, int length, int dynamics) {
     }
     std::cout << "note " << note << ", length " << note_length_musically_raw  << ", rounded " << note_length_musically << ", dynamics " << dynamics << std::endl;
     std::string note_str_terminal = print_result_terminal_helper_note(note);
-    std::string note_str_lilypond = print_result_lilypond_note(note);
+    std::string note_str_abjad = print_result_abjad_note(note);
     std::string length_str = print_result_terminal_helper_length(note_length_musically);
     std::string dynamics_str = print_result_terminal_helper_dynamics(dynamics);
     std::cout << note_str_terminal << ", " << length_str << " is being pressed " << dynamics_str << std::endl;
-    outfile << note_str_lilypond << std::to_string(note_length_musically) << " ";
+    outfile << note_str_abjad << "'" << std::to_string(note_length_musically) << " ";
 }
 
 int ProcessNotes::round_to_power_of_two(int num) {
@@ -150,20 +150,20 @@ std::string ProcessNotes::print_result_terminal_helper_note(int note) {
     return result;
 }
 
-std::string ProcessNotes::print_result_lilypond_note(int note) {
+std::string ProcessNotes::print_result_abjad_note(int note) {
     std::string result;
     switch (note) {
         case 0:
             result += "c";
             break;
-        case 1: 
-            result += "cis";
+        case 1:
+            result += "cs";
             break;
         case 2:
             result += "d";
             break;
         case 3:
-            result += "dis";
+            result += "ds";
             break;
         case 4:
             result += "e";
@@ -172,32 +172,33 @@ std::string ProcessNotes::print_result_lilypond_note(int note) {
             result += "f";
             break;
         case 6:
-            result += "fis";
+            result += "fs";
             break;
         case 7:
             result += "g";
             break;
         case 8:
-            result += "gis";
+            result += "gs";
             break;
         case 9:
             result += "a";
             break;
         case 10:
-            result += "ais";
+            result += "as";
             break;
         case 11:
             result += "b";
             break;
         case 12:
-            result += "c";
-            break;  
+            result += "c'";
+            break;
         case 13:
-            result += "cis";
+            result += "cs'";
             break;
         case 14:
-            result += "d";
+            result += "d'";
             break;
+            
     }
     return result;
 }
