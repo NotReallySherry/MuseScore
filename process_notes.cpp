@@ -53,7 +53,48 @@ void ProcessNotes::update(std::string new_notes) {
 
 // get the processed notes from the sliding window
 std::vector<std::pair<int, int> > ProcessNotes::get_notes() {
-    return window.get_notes();
+    // if rest_count is larger than a whole note, output a rest and reduce rest_count
+    if (window.rest_count >= whole_note_length) {
+        std::cout << "rest" << std::endl;
+        outfile << "r1 ";
+        window.rest_count = window.rest_count - whole_note_length;
+    } else if (window.rest_count == 0 && window.prev_rest_count > 0) {
+        std::cout << "rest" << std::endl;
+        std::string rest_length = round_to_valid_length(window.prev_rest_count);
+        outfile << "r" << rest_length << " ";
+        window.prev_rest_count = 0;
+    }
+
+    // get the processed notes from the sliding window
+    std::vector<std::pair<int, int> > result = window.get_notes();
+
+    return result;
+}
+
+std::string ProcessNotes::round_to_valid_length(int length) {
+    // Calculate the ratio of rest length to whole note length
+    double ratio = static_cast<double>(length) / whole_note_length;
+
+    // Define the valid note lengths and their representations
+    double validNoteLengths[] = {1.0, 0.5, 0.25, 0.125, 0.0625}; // Valid lengths up to 64th note
+
+    // Find the closest valid note length
+    double closestNoteLength = validNoteLengths[0];
+    for (int i = 1; i < sizeof(validNoteLengths) / sizeof(validNoteLengths[0]); ++i) {
+        if (std::abs(ratio - validNoteLengths[i]) < std::abs(ratio - closestNoteLength)) {
+            closestNoteLength = validNoteLengths[i];
+        }
+    }
+
+    // Convert the closest valid note length to the corresponding representation
+    int representation = static_cast<int>(1.0 / closestNoteLength);
+
+    // Check for extra half (dot)
+    if (ratio > closestNoteLength) {
+        return std::to_string(representation) + ".";
+    } else {
+        return std::to_string(representation);
+    }
 }
 
 int ProcessNotes::get_polling_speed() {
@@ -62,20 +103,51 @@ int ProcessNotes::get_polling_speed() {
 
 
 void ProcessNotes::print_get_notes_result(std::vector<std::pair<int, int> > result) {
-    int seen = 0;
+    int result_count = 0;
+    std::vector<std::string> result_strs;
+    std::vector<int> result_lengths;
     for (int i = 0; i < result.size(); i++) {
         // length dynamics
         if (result[i].first > 0 && result[i].second > 0) {
             // if the note is pressed for more than 1 whole note
-            print_result_helper(i, result[i].first, result[i].second);
-            seen = 1;
+            int length;
+            std::string str = print_result_helper(i, result[i].first, result[i].second, &length);
+            result_strs.push_back(str);
+            result_lengths.push_back(length);
+            result_count++;
         }
     }
-    if (seen == 1)
-      std::cout << std::endl;
+    if (result_count > 0) {
+        std::cout << std::endl;
+        
+        int majority_length = majority_vote(result_lengths);
+        outfile << "<";
+        for (int i = 0; i < result_strs.size(); i++) {
+            outfile << result_strs[i] << " ";
+        }
+        outfile << ">" << majority_length << " ";
+    }
 }
 
-void ProcessNotes::print_result_helper(int note, int length, int dynamics) {
+int ProcessNotes::majority_vote(std::vector<int> lengths) {
+    int result = 0;
+    int max_count = 0;
+    for (int i = 0; i < lengths.size(); i++) {
+        int count = 0;
+        for (int j = 0; j < lengths.size(); j++) {
+            if (lengths[j] == lengths[i]) {
+                count++;
+            }
+        }
+        if (count > max_count) {
+            max_count = count;
+            result = lengths[i];
+        }
+    }
+    return result;
+}
+
+std::string ProcessNotes::print_result_helper(int note, int length, int dynamics, int* final_length) {
     int note_length_musically_raw = whole_note_length / length;
     int note_length_musically = round_to_power_of_two(note_length_musically_raw);
     if (note_length_musically <= 0) {
@@ -87,7 +159,8 @@ void ProcessNotes::print_result_helper(int note, int length, int dynamics) {
     std::string length_str = print_result_terminal_helper_length(note_length_musically);
     std::string dynamics_str = print_result_terminal_helper_dynamics(dynamics);
     std::cout << note_str_terminal << ", " << length_str << " is being pressed " << dynamics_str << std::endl;
-    outfile << note_str_abjad << "'" << std::to_string(note_length_musically) << " ";
+    *final_length = note_length_musically;
+    return note_str_abjad + "'";
 }
 
 int ProcessNotes::round_to_power_of_two(int num) {
@@ -198,7 +271,7 @@ std::string ProcessNotes::print_result_abjad_note(int note) {
         case 14:
             result += "d'";
             break;
-            
+
     }
     return result;
 }

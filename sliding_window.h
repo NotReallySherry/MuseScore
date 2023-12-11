@@ -16,6 +16,8 @@ class SlidingWindow {
         int size;
         int notes_count;
         int capacity;
+        int rest_count;
+        int prev_rest_count;
         
         std::vector<std::vector <int> > window;
         SlidingWindow(int window_capacity, int notes_per_window);

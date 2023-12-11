@@ -34,14 +34,14 @@ void run_code(class ProcessNotes process_notes) {
 int main() {
     int window_size; // how "long" of notes to keep around as data to be used
     int notes_per_window; // now many notes are sticked with sensors
-    int pulling_speed; // how many ms until update the notes onto the screen
+    int pulling_speed; // how many ms until update the notes onto the screen (length of 64th note)
     int whole_note_length; // how many polling cycles means a complete whole note
     
     std::cin >> window_size >> notes_per_window >> pulling_speed >> whole_note_length;
 
     if (whole_note_length % pulling_speed != 0 || whole_note_length / pulling_speed < 64) {
         std::cout << "invalid configuration input" << std::endl;
-        return 1;
+        return 1; 
     }
     std::cout << "notes_per_window: " << notes_per_window << ", pulling_speed: " << pulling_speed << ", window_size: " << window_size << ", whole_note_length: " << whole_note_length << std::endl;
 

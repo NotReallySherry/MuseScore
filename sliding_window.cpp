@@ -6,6 +6,8 @@
 SlidingWindow::SlidingWindow(int window_capacity, int notes_per_window) {
     capacity = window_capacity;
     notes_count = notes_per_window;
+    rest_count = 0;
+    prev_rest_count = 0;
 }
 
 void SlidingWindow::update(std::vector<int> new_notes) {
@@ -26,9 +28,14 @@ std::vector<std::pair<int, int> > SlidingWindow::get_notes() {
     }
     std::vector<int> last_window = window.back();
     std::vector<int> last2_window = window[window.size() - 2];
+    bool is_rest = true;
 
     // loop through the set of notes in the window
     for (int i = 0; i < notes_count; i++) {
+        if (last_window[i] > 0) {
+            is_rest = false;
+        }
+
         // the note is current not pressed but pressed in the previous window
         if (last_window[i] == 0 && last2_window[i] > 0) {
             int dynamics = 0;
@@ -47,6 +54,13 @@ std::vector<std::pair<int, int> > SlidingWindow::get_notes() {
         } else {
             result.push_back(std::make_pair(0, 0));
         }
+    }
+
+    if (is_rest) {
+        rest_count++;
+    } else {
+        prev_rest_count = rest_count;
+        rest_count = 0;
     }
 
     return result;
