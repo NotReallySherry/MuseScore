@@ -14,7 +14,7 @@ void run_code(class ProcessNotes process_notes) {
     // read in command line arguments
     std::string notes;
     std::cin >> notes;
-    while (notes != "quit") {
+    while (notes != "stop") {
         // always update the process_notes regardless of pulling cycle
         process_notes.update(notes);
 

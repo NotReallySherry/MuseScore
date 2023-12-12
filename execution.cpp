@@ -40,11 +40,6 @@ int socket_setup(void) {
 void run_code(class ProcessNotes process_notes) {
     // read in command line arguments
     std::string notes;
-    //std::cin >> notes;
-    int clientSocket = socket_setup();
-    if (clientSocket == -1) {
-      return;
-    }
 
     char buffer[1024];
     while (notes != "quit") {
@@ -69,44 +64,64 @@ void run_code(class ProcessNotes process_notes) {
     }
 }
 
+int receive_start_signal(int clientSocket) {
+    char buffer[1024];
+    // continuously receive data from the server until the server sends a start signal
+    while (true) {
+        ssize_t bytesRead = recv(clientSocket, buffer, sizeof(buffer), 0);
+
+        if (bytesRead <= 0) {
+            std::cerr << "Connection closed by server\n";
+            return -1;
+        }
+
+        buffer[bytesRead] = '\0';
+        std::string message = std::string(buffer);
+        // if the notes string starts with "start"
+        if (message.find("start") == 0) {
+            // get the substring after "start"
+            std::string num = message.substr(6);
+            int bpm = std::stoi(num);
+            return bpm;
+        }
+    }
+}
+
 
 int main(int argc, char* argv[]) {
 
-    int window_size; // how "long" of notes to keep around as data to be used
-    int notes_per_window; // now many notes are sticked with sensors
-    int pulling_speed; // how many ms until update the notes onto the screen
-    int whole_note_length; // how many polling cycles means a complete whole note
-    for (size_t i = 1; i < argc; ++i) {
-        std::string sint(argv[i]);
-        switch (i) {
-            case 1:
-              window_size = std::stoi(sint);
-              break;
-            case 2:
-              notes_per_window = std::stoi(sint);
-              break;
-            case 3:
-              pulling_speed = std::stoi(sint);
-              break;
-            case 4:
-              whole_note_length = std::stoi(sint);
-              break;
-        }
-    }
-
-    if (whole_note_length % pulling_speed != 0 || whole_note_length / pulling_speed < 32) {
-        std::cout << "invalid configuration input" << std::endl;
-        return 1;
-    }
-    std::cout << "notes_per_window: " << notes_per_window << ", pulling_speed: " << pulling_speed << ", window_size: " << window_size << ", whole_note_length: " << whole_note_length << std::endl;
+    int window_size = 16384; // how "long" of notes to keep around as data to be used
+    int notes_per_window = 16; // now many notes are sticked with sensors
 
     // create an output file
     std::ofstream outfile;
     outfile.open("cppoutput.txt");
 
-    ProcessNotes process_notes(window_size, notes_per_window, pulling_speed, whole_note_length, outfile);
+    // set up socket to read from
+    int clientSocket = socket_setup();
+    if (clientSocket == -1) {
+      return 1;
+    }
 
-    run_code(process_notes);
+    while (true) {
+        // wait for the start signal from the server
+        int pulling_speed = receive_start_signal(clientSocket);
+        int whole_note_length = 64*pulling_speed; // how many polling cycles means a complete whole note
+
+        std::cout << "***start recording*** pulling_speed: " << pulling_speed << ", whole_note_length: " << whole_note_length << std::endl;
+
+        ProcessNotes process_notes(window_size, notes_per_window, pulling_speed, whole_note_length, outfile);
+        // run the code to get piano inputs and processing algorithm
+        run_code(process_notes);
+        
+        // generate the sheet music
+        system("python3 gen_music_sheet.py");
+
+        // clear the output file
+        std::ofstream ofs;
+        ofs.open("cppoutput.txt", std::ofstream::out | std::ofstream::trunc);
+        ofs.close();
+    }
 
     outfile.close();
     return 0;
