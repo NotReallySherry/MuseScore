@@ -1,7 +1,15 @@
 
 import abjad
 
-string1 = "<a d'>8 f' a' d'' f'' gs'4 r8 e' gs' b' e'' gs'' a'4 "
-voice1 = abjad.Voice(string1, name="RH_Voice")
-staff1 = abjad.Staff([voice1], name="RH_Staff")
-abjad.show(staff1)
+string = "<g' >32 <f' >16  <d' as' >16 <b' >32 <d' e' f' a' >32 <e' >1 <d' >1 <b' >1 <a' >1 "
+
+time_signature = abjad.TimeSignature((3, 4))
+
+voice = abjad.Voice(string, name="Voice")
+staff = abjad.Staff([voice], name="Staff")
+articulation = abjad.Articulation("turn")
+abjad.attach(time_signature, voice[0])
+abjad.attach(articulation, voice[5])
+score = abjad.Score([staff], name="Score")
+
+abjad.show(score)
