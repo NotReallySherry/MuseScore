@@ -18,13 +18,11 @@ void run_code(class ProcessNotes process_notes) {
         // always update the process_notes regardless of pulling cycle
         process_notes.update(notes);
 
-        int cycle = std::stoi(notes.substr(0, notes.find(",")));
+        long cycle = std::stol(notes.substr(0, notes.find(",")));
 
         // get the processed notes at the pulling cycle
-        if (cycle % process_notes.get_polling_speed() == 0) {
-            std::vector<std::pair<int, int> > result = process_notes.get_notes();
-            process_notes.print_get_notes_result(result);
-        }
+        std::vector<std::pair<int, int> > result = process_notes.get_notes();
+        process_notes.print_get_notes_result(result);
         
         std::cin >> notes;
     }

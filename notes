@@ -1,0 +1,14 @@
+120 bpm 4/4
+2 quarter note per second
+pulling speed: 0.03125 second
+whole note length: 2 second
+std::cin >> window_size >> notes_per_window >> pulling_speed >> whole_note_length;
+16384 16 31250 2000000
+
+loop:
+    loop to accept all packets:
+        if not start: drop packet
+        start,# <- bpm (pulling speed)
+    normal packets in loop
+    receive stop
+    generate sheet music

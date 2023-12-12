@@ -27,9 +27,6 @@ void ProcessNotes::update(std::string new_notes) {
         new_notes.erase(0, pos + delimiter.length());
     }
     long cycle = std::stol(notes[0]);
-    if (cycle % polling_speed != 0) {
-        return;
-    }
 
     // update the sliding window
     std::vector<int> new_notes_vector;
@@ -61,7 +58,7 @@ std::vector<std::pair<int, int> > ProcessNotes::get_notes() {
     } else if (window.rest_count == 0 && window.prev_rest_count > 0) {
         std::cout << "rest" << std::endl;
         std::string rest_length = round_to_valid_length(window.prev_rest_count);
-        outfile << "r" << rest_length << " ";
+        // outfile << "r" << rest_length << " ";
         window.prev_rest_count = 0;
     }
 
@@ -127,6 +124,8 @@ void ProcessNotes::print_get_notes_result(std::vector<std::pair<int, int> > resu
         }
         outfile << ">" << majority_length << " ";
     }
+    // flush the output file
+    outfile.flush();
 }
 
 int ProcessNotes::majority_vote(std::vector<int> lengths) {
@@ -148,17 +147,17 @@ int ProcessNotes::majority_vote(std::vector<int> lengths) {
 }
 
 std::string ProcessNotes::print_result_helper(int note, int length, int dynamics, int* final_length) {
-    int note_length_musically_raw = whole_note_length / length;
+    int note_length_musically_raw = whole_note_length / length / polling_speed;
     int note_length_musically = round_to_power_of_two(note_length_musically_raw);
     if (note_length_musically <= 0) {
         note_length_musically = 1;
     }
-    std::cout << "note " << note << ", length " << note_length_musically_raw  << ", rounded " << note_length_musically << ", dynamics " << dynamics << std::endl;
     std::string note_str_terminal = print_result_terminal_helper_note(note);
     std::string note_str_abjad = print_result_abjad_note(note);
     std::string length_str = print_result_terminal_helper_length(note_length_musically);
     std::string dynamics_str = print_result_terminal_helper_dynamics(dynamics);
-    std::cout << note_str_terminal << ", " << length_str << " is being pressed " << dynamics_str << std::endl;
+    std::cout << note_str_abjad << ", " << length_str << " is being pressed " << dynamics_str << std::endl;
+    // std::cout << note_str_abjad << ", " << length_str << " is being pressed " << std::endl;
     *final_length = note_length_musically;
     return note_str_abjad + "'";
 }
@@ -230,48 +229,50 @@ std::string ProcessNotes::print_result_abjad_note(int note) {
             result += "c";
             break;
         case 1:
-            result += "cs";
-            break;
-        case 2:
             result += "d";
             break;
-        case 3:
-            result += "ds";
-            break;
-        case 4:
+        case 2:
             result += "e";
             break;
-        case 5:
+        case 3:
             result += "f";
             break;
-        case 6:
-            result += "fs";
-            break;
-        case 7:
+        case 4:
             result += "g";
             break;
-        case 8:
-            result += "gs";
-            break;
-        case 9:
+        case 5:
             result += "a";
             break;
-        case 10:
-            result += "as";
-            break;
-        case 11:
+        case 6:
             result += "b";
             break;
-        case 12:
+        case 7:
             result += "c'";
             break;
-        case 13:
-            result += "cs'";
-            break;
-        case 14:
+        case 8:
             result += "d'";
             break;
-
+        case 9:
+            result += "e'";
+            break;
+        case 10:
+            result += "cs";
+            break;
+        case 11:
+            result += "ds";
+            break;
+        case 12:
+            result += "fs";
+            break;
+        case 13:
+            result += "gs";
+            break;
+        case 14:
+            result += "as";
+            break;
+        case 15: 
+            result += "cs'";
+            break;
     }
     return result;
 }

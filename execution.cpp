@@ -64,10 +64,8 @@ void run_code(class ProcessNotes process_notes) {
         long cycle = std::stol(notes.substr(0, notes.find(",")));
 
         // get the processed notes at the pulling cycle
-        if (cycle % process_notes.get_polling_speed() == 0) {
-            std::vector<std::pair<int, int> > result = process_notes.get_notes();
+        std::vector<std::pair<int, int> > result = process_notes.get_notes();
             process_notes.print_get_notes_result(result);
-        }
     }
 }
 
@@ -96,7 +94,7 @@ int main(int argc, char* argv[]) {
         }
     }
 
-    if (whole_note_length % pulling_speed != 0 || whole_note_length / pulling_speed < 64) {
+    if (whole_note_length % pulling_speed != 0 || whole_note_length / pulling_speed < 32) {
         std::cout << "invalid configuration input" << std::endl;
         return 1;
     }
